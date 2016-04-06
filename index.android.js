@@ -30,6 +30,7 @@ class MoviesDome extends Component {
 	
 	constructor(props){
 		super(props);
+		console.log('constructor');
 		 this.state = {
 			dataSource: new ListView.DataSource({
 				//用于让ListView判断数据是否发生了变化
@@ -38,6 +39,7 @@ class MoviesDome extends Component {
 			//用于判断数据加载是否已经完成了。
 			loaded: false,
 			isRefreshing: false,
+
 		};
 	}
 	
@@ -46,6 +48,7 @@ class MoviesDome extends Component {
 	
 	//React组件的一个生命周期方法，它会在组件刚加载完成的时候调用一次，以后不再会被调用
 	componentDidMount() {
+		console.log('componentDidMount');
 		//请求数据
 		this.fetchData();
 	}
@@ -64,7 +67,7 @@ class MoviesDome extends Component {
 	}
 
 	
-	//render函数用开渲染视图
+	//render函数用来渲染视图
 	render() {
 		//loaded为false时渲染一个“加载中”的视图
 		if(!this.state.loaded){
