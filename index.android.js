@@ -5,170 +5,50 @@
 //引用不同的React Native组件
 import React, {
   AppRegistry,
-  Component,
-  Image,
-  ListView,
-  StyleSheet,
-  Text,
-  View,
-  ProgressBarAndroid,
-  TouchableOpacity,
+  Component, 
+  Navigator,
 } from 'react-native';
 
+import MovieList from './src/pages/MovieList';
 
 
-//用于请求的json数据
-/* var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json'; */
 
-var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
-var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
-var PAGE_SIZE = 25;
-var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
-var REQUEST_URL = API_URL + PARAMS;
-
-class MoviesDome extends Component {
+export default class MoviesDome extends Component {
 	
 	constructor(props){
 		super(props);
-		console.log('constructor');
-		 this.state = {
-			dataSource: new ListView.DataSource({
-				//用于让ListView判断数据是否发生了变化
-				rowHasChanged: (row1, row2) => row1 !== row2,
-			}),
-			//用于判断数据加载是否已经完成了。
-			loaded: false,
-			isRefreshing: false,
-
-		};
-	}
-	
-	
-	
-	
-	//React组件的一个生命周期方法，它会在组件刚加载完成的时候调用一次，以后不再会被调用
-	componentDidMount() {
-		console.log('componentDidMount');
-		//请求数据
-		this.fetchData();
-	}
-	
-	fetchData(){
-		fetch(REQUEST_URL)
-			.then((response) => response.json())
-			.then((responseData) =>{
-					//setState实际上会触发一次重新渲染的流程，此时render函数被触发，发现this.state.movies不再是null
-					this.setState({
-						dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
-						loaded:true,
-					});
-			})
-			.done();//可以抛出异常而不是简单忽略。	
+		
 	}
 
 	
-	//render函数用来渲染视图
+	//render函数用开渲染视图
 	render() {
-		//loaded为false时渲染一个“加载中”的视图
-		if(!this.state.loaded){
-			return this.renderLoadingView();
-		}
-		
-		return (						
-			<ListView
-				//接口用来在ListView的整个更新过程中判断哪些数据行发生了变化。
-				dataSource={this.state.dataSource}
-				//渲染一个item视图
-				/* renderRow{this.renderMovie} */
-				renderRow={this.renderMovie}
-				style={styles.listView}
-			/>			
-		);
+		//一个初始首页的component名字
+        let defaultName = 'MovieList';
+		//这个组件的Class,用来一会儿实例化成 <Component />标签
+        let defaultComponent = MovieList;
+		 return (
+			<Navigator
+				// 这个指定了默认的页面，也就是启动app之后会看到界面的第一屏。 
+				//需要填写两个参数: name 跟 component。
+			  initialRoute={{ name: defaultName, component: defaultComponent }}
+			  //这个是页面之间跳转时候的动画
+			  configureScene={(route) => {
+				return Navigator.SceneConfigs.VerticalDownSwipeJump;
+			  }}
+			   
+			  renderScene={(route, navigator) => {
+				let Component = route.component;
+				//这里有一个判断，也就是如果传递进来的component存在，那我们就是返回一个这个component
+				// route={component: xxx, name: xxx, ...}， navigator.......route 用来在对应界面获取其他键值
+				//{...route.params}即就是把params里的键值对全部以给属性赋值的方式展开
+				return <Component {...route.params} navigator={navigator} />
+			  }} />
+        );
 	}
 	
-	
-	
-	
-	renderLoadingView(){
-		return(
-			<View style={styles.renderLoadingView}>
-				<ProgressBarAndroid styleAttr='Inverse'/>
-				
-				<Text>
-					 正在加载电影数据……
-				</Text>
-				
-			</View>
-		);
-		
-	}
-	
-	_RowViewOnCilckListener() {
-	  console.log('亲，你点击了'+movie.title);
-	};
-	
-	renderMovie(movie) {
-    return (
-	<TouchableOpacity onPress={this._RowViewOnCilckListener}>
-	
-      <View style={styles.container}>
-        <Image
-          source={{uri: movie.posters.thumbnail}}
-          style={styles.thumbnail}
-        />
-        <View style={styles.rightContainer}>
-          <Text style={styles.title}>{movie.title}</Text>
-          <Text style={styles.year}>{movie.year}</Text>
-        </View>
-      </View>
-	  
-	  </TouchableOpacity>
-    );
-  }
-  
-	
+
 }
-
-
-
-
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		flexDirection: 'row', //让主容器的成员从左到右横向布局
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#F5FCFF',
-		marginBottom: 8,
-	},
-	thumbnail: {
-		width: 53,
-		height: 81,
-	},
-	rightContainer:{
-		flex: 1,
-	},
-	title: {
-		fontSize: 20,
-		marginBottom: 8,
-		textAlign: 'center',
-	},
-	year: {
-		textAlign: 'center',
-	},
-	listView: {
-		paddingTop: 20,
-		backgroundColor: '#F5FCFF',
-	},
-	renderLoadingView: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#F5FCFF',
-	},
-});
-
 
 
 AppRegistry.registerComponent('MoviesDome', () => MoviesDome);
