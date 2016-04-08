@@ -17,15 +17,17 @@ import React, {
 } from 'react-native';
 
 import MovieDetails from '../details/MovieDetails'
+import ItemView from '../view/ItemView'
+import LoadingView from '../view/LoadingView'
 
 //用于请求的json数据
-/* var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json'; */
+ var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json'; 
 
-let API_KEY = '7waqfqbprs7pajbz28mqf6vz';
-let API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
-let PAGE_SIZE = 25;
-let PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
-let REQUEST_URL = API_URL + PARAMS;
+// let API_KEY = '7waqfqbprs7pajbz28mqf6vz';
+// let API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
+// let PAGE_SIZE = 25;
+// let PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
+// let REQUEST_URL = API_URL + PARAMS;
 
 
 
@@ -91,48 +93,40 @@ export default class MovieList extends React.Component {
 	
 	renderLoadingView(){
 		return(
-			<View style={styles.renderLoadingView}>
-				<ProgressBarAndroid styleAttr='Inverse'/>
-				
-				<Text>
-					 正在加载电影数据……
-				</Text>
-				
-			</View>
+			<LoadingView
+				style={styles.rightContainer}
+			/>
 		);
 		
 	}
 	
+    _selectMovieDetails(mv){				
+        const { navigator } = this.props;
+        if(navigator){
+                navigator.push ({
+                name: 'MovieDetails',
+                component: MovieDetails,
+                //passProps: {mv}, // 这里passProps: {movie} 不能把：换成 =    不能使用passProps传递因为传递的是数组中单个的数据
+                params: {mv: mv}
+            })
+        }				       
+    }
+    
 	
 	renderMovie(movie) {
     return (
-	<View>
+	
 	<TouchableOpacity 
 			style={styles.rightContainer} 
-			onPress={() => {
-				
-				const { navigator } = this.props;
-				if(navigator){
-					navigator.push ({
-					name: 'MovieDetails',
-					component: MovieDetails,
-				})
-				}
-				
-            }}>	
-				  <View style={styles.container}>
-					<Image
-					  source={{uri: movie.posters.thumbnail}}
-					  style={styles.thumbnail}
-					/>
-					<View style={styles.rightContainer}>
-					  <Text style={styles.title}>{movie.title}</Text>
-					  <Text style={styles.year}>{movie.year}</Text>
-					</View>
-				  </View>
+			onPress={() => this._selectMovieDetails(movie)}>	
+				  
+			<ItemView 
+				style={styles.rightContainer}				
+				movie={movie}  //传递数据
+			/>
 	  
 	  </TouchableOpacity>
-	  </View>
+	 
     );
   }
   
@@ -149,30 +143,15 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F5FCFF',
 		marginBottom: 8,
 	},
-	thumbnail: {
-		width: 53,
-		height: 81,
-	},
+	
 	rightContainer:{
 		flex: 1,
 	},
-	title: {
-		fontSize: 20,
-		marginBottom: 8,
-		textAlign: 'center',
-	},
-	year: {
-		textAlign: 'center',
-	},
+	
 	listView: {
 		paddingTop: 20,
 		backgroundColor: '#F5FCFF',
 	},
-	renderLoadingView: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: '#F5FCFF',
-	},
+
 });
 

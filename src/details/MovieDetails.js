@@ -1,59 +1,82 @@
 import React,{
     View,
     Text,
+    Image,
     TouchableOpacity,
 	BackAndroid,
 	StyleSheet,
 } from 'react-native';
 
 import MovieList from '../pages/MovieList';
+import ItemView from '../view/ItemView'
 
 export default class MovieDetails extends React.Component {
     constructor(props) {
         super(props);
+        
         this.backEvent = this._backEvent.bind(this);
     }
 	
-	//React×é¼şµÄÒ»¸öÉúÃüÖÜÆÚ·½·¨£¬Ëü»áÔÚ×é¼ş¸Õ¼ÓÔØÍê³ÉµÄÊ±ºòµ÷ÓÃÒ»´Î£¬ÒÔºó²»ÔÙ»á±»µ÷ÓÃ
+	//Reactç»„ä»¶çš„ä¸€ä¸ªç”Ÿå‘½å‘¨æœŸæ–¹æ³•ï¼Œå®ƒä¼šåœ¨ç»„ä»¶åˆšåŠ è½½å®Œæˆçš„æ—¶å€™è°ƒç”¨ä¸€æ¬¡ï¼Œä»¥åä¸å†ä¼šè¢«è°ƒç”¨
 	componentDidMount() {
 		BackAndroid.addEventListener('hardwareBackPress',this.backEvent);
 	}
-	//ÓÃÓÚÍê³ÉÔÚ×é¼ş´ÓDOMÖĞĞ¶ÔØÖ®Ç°µÄ²Ù×÷
+	//ç”¨äºå¤„ç†ç§»é™¤ç»„ä»¶çš„æ“ä½œ
 	componentWillUnmount() {
 		BackAndroid.removeEventListener('hardwareBackPress',this.backEvent);
 	}
 	
-	 _backEvent = () => {
-		const nav = this.props.navigator;
-		const routers = nav.getCurrentRoutes();
+	 _backEvent () {
+		const {navigator} = this.props;
+		const routers = navigator.getCurrentRoutes();
 		if (routers.length > 1) {
-		  nav.pop();
+		  navigator.pop();
 		  return true;
 		}
 		return false;
 	  };
 	
     render() {
+        let {mv} = this.props;
+         console.log(mv);
         return (
-            <View style={styles.container}>
-              
-                    <Text style={styles.text}>Click back to return to the video list</Text>
-             
-            </View>
+ 			  <View style={styles.container}>
+					<Image
+					  source={{uri:mv.posters.thumbnail}}
+					  style={styles.thumbnail}
+					/>
+					<View style={styles.rightContainer}>
+					  <Text style={styles.title}>{mv.title}</Text>
+					  <Text style={styles.year}>{mv.year}</Text>
+					</View>
+			  </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
-	container: {
+    container: {
 		flex: 1,
+		flexDirection: 'row', //è®©ä¸»å®¹å™¨çš„æˆå‘˜ä»å·¦åˆ°å³æ¨ªå‘å¸ƒå±€
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: '#F5FCFF',
+		marginBottom: 8,
 	},
-
-	text: {
+	thumbnail: {
+		width: 53,
+		height: 81,
+	},
+	rightContainer:{
+		flex: 1,
+	},
+	title: {
 		fontSize: 20,
+		marginBottom: 8,
+		textAlign: 'center',
+	},
+	year: {
+		textAlign: 'center',
 	},
 
 });
