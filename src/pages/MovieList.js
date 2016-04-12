@@ -9,9 +9,6 @@ import React, {
   Image,
   ListView,
   StyleSheet,
-  Text,
-  View,
-  ProgressBarAndroid,
   TouchableOpacity,
 
 } from 'react-native';
@@ -50,10 +47,10 @@ export default class MovieList extends React.Component {
 	//React组件的一个生命周期方法，它会在组件刚加载完成的时候调用一次，以后不再会被调用
 	componentDidMount() {
 		//请求数据
-		this.fetchData();
+		this._fetchData();
 	}
 	
-	fetchData(){
+	_fetchData(){
 		fetch(REQUEST_URL)
 			.then((response) => response.json())
 			.then((responseData) =>{
@@ -71,18 +68,18 @@ export default class MovieList extends React.Component {
 	render() {
 		//loaded为false时渲染一个“加载中”的视图
 		if(!this.state.loaded){
-			return this.renderLoadingView();
+			return this._renderLoadingView();
 		}
 		
 		return (						
 			<ListView
 				
 				/* navigator={this.props.navigator} */
-				//接口用来在ListView的整个更新过程中判断哪些数据行发生了变化。
+				//接口用来在ListView的整个更新过程中判断哪些数据行发生了变化。 
 				dataSource={this.state.dataSource}
 				//渲染一个item视图
 				/* renderRow{this.renderMovie} */
-				renderRow={this.renderMovie.bind(this)}
+				renderRow={this._renderMovie.bind(this)}
 				style={styles.listView}
 			/>			
 		);
@@ -91,7 +88,7 @@ export default class MovieList extends React.Component {
 	
 	
 	
-	renderLoadingView(){
+	_renderLoadingView(){
 		return(
 			<LoadingView
 				style={styles.rightContainer}
@@ -106,19 +103,19 @@ export default class MovieList extends React.Component {
                 navigator.push ({
                 name: 'MovieDetails',
                 component: MovieDetails,
-                //passProps: {mv}, // 这里passProps: {movie} 不能把：换成 =    不能使用passProps传递因为传递的是数组中单个的数据
-                params: {mv: mv}
+                //passProps: {mv}, // 这里passProps: {movie} 不能把：换成 =    不能使用passProps传递 
+                params: {mv}
             })
         }				       
     }
     
 	
-	renderMovie(movie) {
+	_renderMovie(movie) {
     return (
 	
 	<TouchableOpacity 
 			style={styles.rightContainer} 
-			onPress={() => this._selectMovieDetails(movie)}>	
+			onPress={() =>this._selectMovieDetails(movie)}>	
 				  
 			<ItemView 
 				style={styles.rightContainer}				

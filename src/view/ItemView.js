@@ -15,7 +15,7 @@ import React, {
 export default class ItemView extends React.Component {
 
 	render()  {
-        let {movie} = this.props? this.props : this.props.movie ;
+        let {movie} = this.props;//? this.props : this.props.movie ;
 		return (
 			  <View style={styles.container}>
 					<Image
